@@ -2,7 +2,7 @@
 pragma solidity ^0.8.20;
 
 import "forge-std/Test.sol";
-import "../src/Booster.sol";
+import "../src/BoosterVeloLp.sol";
 import "../src/interfaces/IGauge.sol";
 import "../lib/openzeppelin-contracts/contracts/token/ERC20/IERC20.sol";
 
