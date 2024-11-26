@@ -1,66 +1,114 @@
-## Foundry
+# Documentación del Contrato BoosterVeloLp
 
-**Foundry is a blazing fast, portable and modular toolkit for Ethereum application development written in Rust.**
+## Descripción General
+El contrato **BoosterVeloLp** funciona como un intermediario entre los usuarios que depositan tokens LP y los contratos **Gauge** de Velodrome. Su objetivo es maximizar los rendimientos para los usuarios, pagando las recompensas en **ITP** en lugar de **VELO**.
 
-Foundry consists of:
+---
 
--   **Forge**: Ethereum testing framework (like Truffle, Hardhat and DappTools).
--   **Cast**: Swiss army knife for interacting with EVM smart contracts, sending transactions and getting chain data.
--   **Anvil**: Local Ethereum node, akin to Ganache, Hardhat Network.
--   **Chisel**: Fast, utilitarian, and verbose solidity REPL.
+## Características Principales
 
-## Documentation
+### Gestión de LPs y Gauges:
+- Permite a los usuarios depositar tokens LP que son puestos en staking en los contratos Gauge asociados.
+- Calcula y distribuye recompensas con un rendimiento adicional (*boost*) pagado en ITP.
 
-https://book.getfoundry.sh/
+### Boost de Recompensas:
+- Utiliza un oráculo para convertir las recompensas originales en VELO a ITP.
+- Aplica un porcentaje adicional específico para cada LP.
 
-## Usage
+### Control Propietario:
+- Permite al propietario del contrato gestionar los Gauges.
+- Configura porcentajes de *boost*, comisiones y retira fondos acumulados.
 
-### Build
+---
 
-```shell
-$ forge build
-```
+## Variables Principales
 
-### Test
+### Tokens y Contratos Asociados:
+- **itpToken**: Dirección del token ITP.
+- **veloToken**: Dirección del token VELO.
+- **router**: Contrato Velodrome Router.
+- **oracle**: Contrato VeloOracle utilizado para tasas de conversión.
 
-```shell
-$ forge test
-```
+### Configuración y Control:
+- **feePercentage**: Porcentaje de comisión para retiros.
+- **boostPercentage**: Mapeo de LPs con el porcentaje de *boost* aplicado.
+- **gauges**: Mapeo de LPs asociados con contratos Gauge.
 
-### Format
+### Balances y Recompensas:
+- **balanceOf**: Mapeo del balance de LPs por usuario y token.
+- **rewards**: Mapeo de recompensas pendientes por usuario y token.
+- **lpFee**: Mapeo de comisiones acumuladas por token LP.
 
-```shell
-$ forge fmt
-```
+---
 
-### Gas Snapshots
+## Funciones del Contrato
 
-```shell
-$ forge snapshot
-```
 
-### Anvil
 
-```shell
-$ anvil
-```
+## 1. Funciones Administrativas (*Solo Owner*)
 
-### Deploy
+### Gestión de Gauges
+- **initializeGauges**: Asocia múltiples LPs con sus respectivos Gauges en una sola transacción.
+- **addGauge**: Configura o actualiza un Gauge para un token LP.
 
-```shell
-$ forge script script/Counter.s.sol:CounterScript --rpc-url <your_rpc_url> --private-key <your_private_key>
-```
+### Gestión de Configuración
+- **setRouter**: Actualiza la dirección del contrato Router.
+- **setOracle**: Actualiza la dirección del contrato Oracle.
+- **setFeePercentage**: Configura el porcentaje de comisión para retiros.
+- **setBoostPercentage**: Configura el porcentaje de *boost* aplicado a las recompensas.
 
-### Cast
+### Gestión de Fondos
+- **claimVeloOwner**: Reclama recompensas acumuladas en VELO.
+- **getLpFee**: Recupera las comisiones acumuladas para un LP.
+- **withdrawITP**: Retira tokens ITP del contrato.
 
-```shell
-$ cast <subcommand>
-```
+---
 
-### Help
+## 2. Funciones para Usuarios
 
-```shell
-$ forge --help
-$ anvil --help
-$ cast --help
-```
+### Depósito y Retiro
+- **deposit**: Permite a los usuarios depositar LPs que son enviados al Gauge correspondiente.
+- **withdraw**: Retira LPs junto con las recompensas generadas, aplicando una comisión sobre los retiros.
+
+### Recompensas
+- **earned**: Calcula las recompensas acumuladas para un usuario en un LP específico.
+- **earnedItp**: Convierte las recompensas en VELO a ITP aplicando el *boost*.
+- **balanceOfLp**: Retorna el balance de LPs de un usuario.
+- **viewBoostPercentage**: Muestra el porcentaje de *boost* aplicado a un LP.
+
+---
+
+## 3. Funciones Internas
+
+### Recompensas con Boost
+- **rewardboost**: Calcula el valor de las recompensas en ITP utilizando el oráculo y aplica el *boost* definido para el LP.
+
+### Actualización de Recompensas
+- **_updateRewards**: Actualiza las recompensas acumuladas de un usuario antes de cualquier acción (depósito o retiro).
+
+---
+
+
+## Flujo del Contrato
+
+### Depósito
+1. Los usuarios depositan LPs.
+2. Los LPs son enviados al Gauge correspondiente.
+3. Se calculan las recompensas basadas en la actividad del Gauge.
+
+### Recompensas
+- Las recompensas en VELO generadas por el Gauge son convertidas a ITP con un *boost* adicional.
+
+### Retiro
+1. Los usuarios pueden retirar sus LPs y reclamar sus recompensas en ITP.
+2. Se aplica una comisión sobre el retiro que se acumula para el propietario.
+
+---
+
+## Mejoras Futuras
+
+- Soporte para más tokens y protocolos.
+- Optimización del cálculo de *boost* para reducir costos de gas.
+- Interfaz para seguimiento en tiempo real de las recompensas y balances.
+
+
