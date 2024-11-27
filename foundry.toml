@@ -3,7 +3,6 @@ src = "src"
 out = "out"
 libs = ["lib"]
 evm_version = 'shanghai'
-etherscan_api_key = "QB8TYGFX8UFEK973D3W5Q8UHVYSC5YH7HE"
 
 
 # See more config options https://github.com/foundry-rs/foundry/blob/master/crates/config/README.md#all-options
