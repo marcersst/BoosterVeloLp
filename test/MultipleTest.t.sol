@@ -54,7 +54,7 @@ import "../lib/openzeppelin-contracts/contracts/token/ERC20/IERC20.sol";
             console.log("OWNEEEER", booster.owner());
 
             vm.startPrank(address(0x9));
-            booster.AddGauge(address(lpToken), gauge, 200);
+            booster.addGauge(address(lpToken), gauge, 200);
             vm.stopPrank();
 
             // direcciones de prueba de usuarios
@@ -170,7 +170,7 @@ import "../lib/openzeppelin-contracts/contracts/token/ERC20/IERC20.sol";
             booster.withdraw(DEPOSIT_AMOUNT,address(lpToken));
             console.log("Balance del LP en fee para ser reclamado", lpToken.balanceOf(address(booster)));
             console.log("balance en itp user 1", itpToken.balanceOf(user1));
-            console.log("saldo de cosecha despues del retiro", booster.BalanceOfLp(user1, address(lpToken)));
+            console.log("saldo de cosecha despues del retiro", booster.balanceOfLp(user1, address(lpToken)));
             vm.stopPrank();
 
             
@@ -180,7 +180,16 @@ import "../lib/openzeppelin-contracts/contracts/token/ERC20/IERC20.sol";
            
 
             vm.startPrank(address(0x9));
-            booster.getLpFee(address(lpToken),lpToken.balanceOf(address(booster)));
+            booster.claimVeloOwner(address(lpToken));
+            console.log(
+            "Balance VELO:", veloToken.balanceOf(address(0x9)),
+            "Balance LP:", lpToken.balanceOf(address(0x9))
+            );
+            booster.getLpFeeAndVelo(address(lpToken),lpToken.balanceOf(address(booster)));
+              console.log(
+            "Balance VELO:", veloToken.balanceOf(address(0x9)),
+            "Balance LP:", lpToken.balanceOf(address(0x9))
+            );
             assertEq(100 ether,lpToken.balanceOf(address(0x9)));
             vm.stopPrank();
 
@@ -250,7 +259,7 @@ import "../lib/openzeppelin-contracts/contracts/token/ERC20/IERC20.sol";
         Ownable.OwnableUnauthorizedAccount.selector,
         user1
     ));
-        booster.getLpFee(address(lpToken), 100 ether);
+        booster.getLpFeeAndVelo(address(lpToken), 100 ether);
         vm.stopPrank();
     }
     }

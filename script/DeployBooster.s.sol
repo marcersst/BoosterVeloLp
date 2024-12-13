@@ -26,7 +26,7 @@ contract DeployBooster is Script {
         console.log("Contrato BoosterVeloLp desplegado en:", address(booster));
         console.log(" PRIMER OWNER",booster.owner());
         console.log("owner que envia la tx", msg.sender);
-        booster.AddGauge(lpToken, IGauge(gaugeAddress),200);
+        booster.addGauge(lpToken, IGauge(gaugeAddress),200);
         booster.transferOwnership(address(0xb5dB6e5a301E595B76F40319896a8dbDc277CEfB));
         console.log(" SEGUNDO OWNER",booster.owner());
         console.log("Gauge asignado?", booster.isActivePool(address(lpToken)));
